@@ -11,8 +11,6 @@ import { TripDataService } from '../services/trip-data.service';
 
 @Component({
   selector: 'app-add-trip',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './add-trip.component.html',
   styleUrls: ['./add-trip.component.css'],
 })
@@ -40,22 +38,18 @@ export class AddTripComponent implements OnInit {
     });
   }
 
-  public onSubmit() {
+  onSubmit() {
+    debugger;
     this.submitted = true;
     if (this.addForm.valid) {
-      this.tripService.addTrip(this.addForm.value).subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.router.navigate(['']);
-        },
-        error: (error: any) => {
-          console.log('Error: ' + error);
-        },
-      });
+        this.tripService.addTrip(this.addForm.value).then((formData) => {
+            console.log('TripEditComponent#onSubmit data', formData);
+            this.router.navigate(['list-trips']);
+        }).catch((error) => {
+            console.error('Error adding trip:', error);
+        });
     }
-  }
-
-  // get the form short name to access the form fields
+}
   get f() {
     return this.addForm.controls;
   }

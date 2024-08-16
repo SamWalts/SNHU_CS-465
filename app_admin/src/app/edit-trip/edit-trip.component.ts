@@ -12,8 +12,6 @@ import { Trip } from '../models/trip';
 
 @Component({
   selector: 'app-edit-trip',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './edit-trip.component.html',
   styleUrl: './edit-trip.component.css',
 })
@@ -50,34 +48,29 @@ export class EditTripComponent implements OnInit {
       image: ['', Validators.required],
       description: ['', Validators.required],
     });
-    this.tripDataService.getTrip(tripCode).subscribe({
-      next: (value: any) => {
+    this.tripDataService
+      .getTrip(tripCode)
+      .then((value: any) => {
         this.trip = value;
         // Populate the record into the form
         this.editForm.patchValue(value[0]);
         if (!value) {
           this.message = 'No trip found!';
         } else {
-          this.message = 'Trip ' + tripCode + 'retrieved!';
+          this.message = 'Trip ' + tripCode + ' retrieved!';
         }
         console.log(this.message);
-      },
-      error: (error: any) => {
+      })
+      .catch((error: any) => {
         console.log('Error: ' + error);
-      },
-    });
+      });
   }
-  public onSubmit() {
+  onSubmit() {
     this.submitted = true;
     if (this.editForm.valid) {
-      this.tripDataService.updateTripTrip(this.editForm.value).subscribe({
-        next: (value: any) => {
-          console.log(value);
-          this.router.navigate(['']);
-        },
-        error: (error: any) => {
-          console.log('Error: ' + error);
-        },
+      this.tripDataService.updateTrip(this.editForm.value).then((formData) => {
+        console.log('TripEditComponent#onSubmit data', formData);
+        this.router.navigate(['list-trips']);
       });
     }
   }
